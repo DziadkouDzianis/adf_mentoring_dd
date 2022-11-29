@@ -1,0 +1,33 @@
+{
+	"name": "tr_pl_data_cinematickets_to_movies_cinematickets_inc",
+	"properties": {
+		"description": "TO start pl_data_cinematickets_to_movies_cinematickets_inc\n once a day",
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "pl_data_cinematickets_to_movies_cinematickets_inc",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2022-10-27T21:31:00",
+				"timeZone": "W. Europe Standard Time",
+				"schedule": {
+					"minutes": [
+						10
+					],
+					"hours": [
+						9
+					]
+				}
+			}
+		}
+	}
+}

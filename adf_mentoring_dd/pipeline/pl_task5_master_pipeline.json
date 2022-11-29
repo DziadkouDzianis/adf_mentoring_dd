@@ -1,0 +1,137 @@
+{
+	"name": "pl_task5_master_pipeline",
+	"properties": {
+		"description": "Run task5 ",
+		"activities": [
+			{
+				"name": "pl_data_ds_adls_raw_movies_to_azsql_Credits",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "pl_data_ds_ablb_movies_to_ds_adls_csv_raw",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_data_ds_adls_raw_movies_to_azsql_Credits",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "pl_data_ds_adls_raw_movies_to_azsql_metadata_movies",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "pl_data_ds_ablb_movies_to_ds_adls_csv_raw",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_data_ds_adls_raw_movies_to_azsql_metadata_movies",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "pl_data_ds_adls_raw_movies_to_azsql_ratings",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "pl_data_ds_ablb_movies_to_ds_adls_csv_raw",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_data_ds_adls_raw_movies_to_azsql_ratings",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "pl_data_azsql_process_sprocs",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "pl_data_ds_adls_raw_movies_to_azsql_Credits",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "pl_data_ds_adls_raw_movies_to_azsql_metadata_movies",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "pl_data_ds_adls_raw_movies_to_azsql_ratings",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_data_azsql_process_sprocs",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "pl_data_ds_ablb_movies_to_ds_adls_csv_raw",
+				"description": "Task 2.3",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_data_ds_ablb_movies_to_ds_adls_csv_raw",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "pl_data_adls_clean_raw_movies",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "pl_data_azsql_process_sprocs",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_data_adls_clean_raw_movies",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2022-10-26T15:52:01Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

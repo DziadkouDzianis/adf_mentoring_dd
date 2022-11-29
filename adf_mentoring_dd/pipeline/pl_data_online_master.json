@@ -1,0 +1,120 @@
+{
+	"name": "pl_data_online_master",
+	"properties": {
+		"activities": [
+			{
+				"name": "pl_data_ablb_online_to_adls_online",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ACT_GEN_META_LastModifiedDateAdls",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_data_ablb_online_to_adls_online",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"Last_Modified": {
+							"value": "@activity('ACT_GEN_META_LastModifiedDateAdls').output.lastModified",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "pl_data_adls_online_to_azsql_online_purchase",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "pl_data_ablb_online_to_adls_online",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_data_adls_online_to_azsql_online_purchase",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"Last_Modified": {
+							"value": "@activity('ACT_GEN_META_LastModifiedDateAdls').output.lastModified",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "pl_data_adls_online_to_adls_online_arc",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "pl_data_adls_online_to_azsql_online_purchase",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_data_adls_online_to_adls_online_arc",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ACT_GEN_META_LastModifiedDateAdls",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_adls_json_folder",
+						"type": "DatasetReference",
+						"parameters": {
+							"Sub_Folder": "online"
+						}
+					},
+					"fieldList": [
+						"lastModified"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "JsonReadSettings"
+					}
+				}
+			}
+		],
+		"variables": {
+			"Last_modified": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-11-02T18:53:32Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

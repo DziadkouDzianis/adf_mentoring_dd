@@ -1,0 +1,326 @@
+{
+	"name": "pl_data_ds_adls_raw_movies_to_azsql_ratings",
+	"properties": {
+		"activities": [
+			{
+				"name": "ACT_GT_AdlsRawMoviesFilenameList",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_adls_csv_raw_param_wildcard",
+						"type": "DatasetReference",
+						"parameters": {
+							"File_name_pattern": "ratings_part*.csv",
+							"Sub_Folder": "movies"
+						}
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "ACT_TR_StgRatingsTable",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "ACT_GT_AdlsRawMoviesFilenameList",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "TRUNCATE TABLE [stg].[ratings];\nSELECT 1;",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ds_azsql_movies_credits",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "ACT_Loop_Proceed_Files",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "ACT_TR_StgRatingsTable",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('ACT_GT_AdlsRawMoviesFilenameList').output.childItems",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "ACT_MT_Ratings_MoviesFromAdlsToAzSQLMovies",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"additionalColumns": [
+										{
+											"name": "pipelineId",
+											"value": {
+												"value": "@pipeline().RunId",
+												"type": "Expression"
+											}
+										},
+										{
+											"name": "source_filename",
+											"value": {
+												"value": "@item().name",
+												"type": "Expression"
+											}
+										}
+									],
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": "--TRUNCATE TABLE [stg].[ratings];\nselect 1;",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false,
+									"tableOption": "autoCreate",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"parallelCopies": 10,
+								"dataIntegrationUnits": 2,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "userId",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "userId",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "movieId",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "movieId",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "rating",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "rating",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "timestamp",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "timestamp",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "pipelineId",
+												"type": "String"
+											},
+											"sink": {
+												"name": "pipelineId",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "source_filename",
+												"type": "String"
+											},
+											"sink": {
+												"name": "source_filename",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										}
+									],
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_adls_csv_raw_param_one_file",
+									"type": "DatasetReference",
+									"parameters": {
+										"File_name_pattern": {
+											"value": "@item().name",
+											"type": "Expression"
+										},
+										"Sub_folder": "movies"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_azsql_movies_ratings",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "ACT_MT_Retings_MoviesFromAdlsToArchive",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "ACT_MT_Ratings_MoviesFromAdlsToAzSQLMovies",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"dataIntegrationUnits": 2,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_adls_csv_raw_param_one_file",
+									"type": "DatasetReference",
+									"parameters": {
+										"File_name_pattern": {
+											"value": "@item().name",
+											"type": "Expression"
+										},
+										"Sub_folder": "movies"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_adls_csv_raw_param_one_file",
+									"type": "DatasetReference",
+									"parameters": {
+										"File_name_pattern": "@item().name",
+										"Sub_folder": "archive"
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2022-10-27T05:49:49Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

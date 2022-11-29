@@ -1,0 +1,12 @@
+{
+	"name": "ls_adls_raw",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "linked service for the ADLS raw ",
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://azurementoringdatalakedd.dfs.core.windows.net/"
+		}
+	}
+}

@@ -1,0 +1,40 @@
+{
+	"name": "ds_adls_csv_raw_param_wildcard",
+	"properties": {
+		"description": "wit a parametr",
+		"linkedServiceName": {
+			"referenceName": "ls_adls_raw",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"File_name_pattern": {
+				"type": "string"
+			},
+			"Sub_Folder": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().File_name_pattern",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().Sub_Folder",
+					"type": "Expression"
+				},
+				"fileSystem": "raw"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\"",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

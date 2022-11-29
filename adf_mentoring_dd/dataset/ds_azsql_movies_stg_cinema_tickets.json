@@ -1,0 +1,52 @@
+{
+	"name": "ds_azsql_movies_stg_cinema_tickets",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azsql_movies",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"Table_name": {
+				"type": "string"
+			},
+			"Schema_name": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "cast",
+				"type": "nvarchar"
+			},
+			{
+				"name": "crew",
+				"type": "nvarchar"
+			},
+			{
+				"name": "id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "pipelineId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "source_filename",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().Schema_name",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().Table_name",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

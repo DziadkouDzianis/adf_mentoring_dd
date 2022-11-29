@@ -1,0 +1,293 @@
+{
+	"name": "pl_data_adls_online_to_azsql_online_purchase",
+	"properties": {
+		"activities": [
+			{
+				"name": "ACT_GEN_META_File_list",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_adls_online_json",
+						"type": "DatasetReference",
+						"parameters": {
+							"File_name": {
+								"value": "*.json",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"modifiedDatetimeStart": {
+							"value": "@pipeline().parameters.Last_Modified",
+							"type": "Expression"
+						},
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "JsonReadSettings"
+					}
+				}
+			},
+			{
+				"name": "ACT_ITRC_IF_LoadForEach",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "ACT_GEN_LKP_Clean_online_purchase",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('ACT_GEN_META_File_list').output.childItems",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "ACT_MT_OnlineFromAdlsToAzSQLOnline_Purchase",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "JsonSource",
+									"additionalColumns": [
+										{
+											"name": "pipelineId",
+											"value": {
+												"value": "@pipeline().RunId",
+												"type": "Expression"
+											}
+										},
+										{
+											"name": "source_filename",
+											"value": {
+												"value": "@item().name",
+												"type": "Expression"
+											}
+										}
+									],
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"modifiedDatetimeStart": {
+											"value": "@pipeline().parameters.Last_Modified",
+											"type": "Expression"
+										},
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "JsonReadSettings"
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false,
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"path": "$['serviceName']"
+											},
+											"sink": {
+												"name": "online_service_name",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "$['serviceCode']"
+											},
+											"sink": {
+												"name": "online_service_code",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "$['movieId']"
+											},
+											"sink": {
+												"name": "movie_id",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "$['userId']"
+											},
+											"sink": {
+												"name": "user_id",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "$['price']"
+											},
+											"sink": {
+												"name": "price",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "$['transaction']['id']"
+											},
+											"sink": {
+												"name": "transaction_id",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "$['transaction']['datetime']"
+											},
+											"sink": {
+												"name": "transaction_date",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "$['pipelineId']"
+											},
+											"sink": {
+												"name": "pipelineId",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "$['source_filename']"
+											},
+											"sink": {
+												"name": "source_filename",
+												"type": "String"
+											}
+										}
+									]
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_adls_online_json",
+									"type": "DatasetReference",
+									"parameters": {
+										"File_name": {
+											"value": "@item().name",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_azsql_online_purchase",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "ACT_GEN_LKP_Clean_online_purchase",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "ACT_GEN_META_File_list",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "TRUNCATE TABLE [stg].[online_purchase];\nselect 1;",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ds_azsql_movies_ratings",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "ACT_GEN_SPRC_runStoredProcedureForDbo",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "ACT_ITRC_IF_LoadForEach",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[LoadOnline_purchase]"
+				},
+				"linkedServiceName": {
+					"referenceName": "ls_azsql_movies",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"concurrency": 5,
+		"parameters": {
+			"Last_Modified": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-11-02T18:53:32Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

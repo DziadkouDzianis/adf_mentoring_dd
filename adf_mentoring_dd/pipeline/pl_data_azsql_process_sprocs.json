@@ -1,0 +1,37 @@
+{
+	"name": "pl_data_azsql_process_sprocs",
+	"properties": {
+		"description": "Run all stored procedures",
+		"activities": [
+			{
+				"name": "ACT_GEN_SPRC_runStoredProceduresForDbo",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "ls_azsql_movies",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "PRINT 'dbo.LoadCredits_To_Cast                    '   EXEC dbo.LoadCredits_To_Cast                     ;\nPRINT 'dbo.LoadMovies_metadata_to_Company         '   EXEC dbo.LoadMovies_metadata_to_Company          ;\nPRINT 'dbo.LoadMovies_metadata_to_MovieStatus     '   EXEC dbo.LoadMovies_metadata_to_MovieStatus      ;\nPRINT 'dbo.LoadMovies_metadata_to_Genre           '   EXEC dbo.LoadMovies_metadata_to_Genre            ;\nPRINT 'dbo.LoadMovies_metadata_to_Movie           '   EXEC dbo.LoadMovies_metadata_to_Movie            ;\nPRINT 'dbo.LoadMovies_metadata_to_MoviesCompanyMap'   EXEC dbo.LoadMovies_metadata_to_MoviesCompanyMap ;\nPRINT 'dbo.LoadMovies_metadata_to_MoviesGenreMap  '   EXEC dbo.LoadMovies_metadata_to_MoviesGenreMap   ;\nPRINT 'dbo.LoadRatings_to_Ratings                 '   EXEC dbo.LoadRatings_to_Ratings                  ;\nPRINT 'dbo.Loadcredits_to_MoviesCastMap           '   EXEC dbo.Loadcredits_to_MoviesCastMap            ;\n"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2022-10-26T15:35:32Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

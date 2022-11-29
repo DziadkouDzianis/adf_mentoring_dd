@@ -1,0 +1,19 @@
+{
+	"name": "ls_ablb_movies",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "linked service for the movies blob",
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"sasUri": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "kv",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "SASURIBlobToMoviesk2"
+			}
+		}
+	}
+}

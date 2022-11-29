@@ -1,0 +1,19 @@
+{
+	"name": "ls_ablb_online",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "st online read only",
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"sasUri": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "kv",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "SecretOnlineReadOnly"
+			}
+		}
+	}
+}

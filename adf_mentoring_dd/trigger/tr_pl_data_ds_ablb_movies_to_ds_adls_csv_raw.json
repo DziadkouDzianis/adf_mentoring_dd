@@ -1,0 +1,40 @@
+{
+	"name": "tr_pl_data_ds_ablb_movies_to_ds_adls_csv_raw",
+	"properties": {
+		"description": "to run pl_data_ds_ablb_movies_to_ds_adls_csv_raw",
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "pl_data_ds_ablb_movies_to_ds_adls_csv_raw",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Week",
+				"interval": 15,
+				"startTime": "2022-10-18T21:38:00",
+				"timeZone": "W. Europe Standard Time",
+				"schedule": {
+					"minutes": [
+						45
+					],
+					"hours": [
+						23
+					],
+					"weekDays": [
+						"Monday",
+						"Tuesday",
+						"Wednesday",
+						"Thursday",
+						"Friday"
+					]
+				}
+			}
+		}
+	}
+}

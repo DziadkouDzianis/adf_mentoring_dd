@@ -1,0 +1,7 @@
+{
+	"name": "AzureSelfIHostedR-dd",
+	"properties": {
+		"type": "SelfHosted",
+		"description": "Azure ADF training"
+	}
+}
