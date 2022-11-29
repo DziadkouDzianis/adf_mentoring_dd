@@ -1,0 +1,73 @@
+{
+    "name": "pl_data_ablb_online_to_adls_online_TEST",
+    "properties": {
+        "activities": [
+            {
+                "name": "ACT_MT_Copy_ablb_to_adls_online",
+                "description": "task 7 ",
+                "type": "Copy",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "JsonSource",
+                        "storeSettings": {
+                            "type": "AzureBlobStorageReadSettings",
+                            "recursive": true,
+                            "modifiedDatetimeStart": {
+                                "value": "@pipeline().parameters.Last_Modified",
+                                "type": "Expression"
+                            },
+                            "wildcardFileName": "*.json",
+                            "enablePartitionDiscovery": false
+                        },
+                        "formatSettings": {
+                            "type": "JsonReadSettings"
+                        }
+                    },
+                    "sink": {
+                        "type": "JsonSink",
+                        "storeSettings": {
+                            "type": "AzureBlobFSWriteSettings"
+                        },
+                        "formatSettings": {
+                            "type": "JsonWriteSettings"
+                        }
+                    },
+                    "enableStaging": false,
+                    "parallelCopies": 16
+                },
+                "inputs": [
+                    {
+                        "referenceName": "ds_ablb_online_json",
+                        "type": "DatasetReference"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "referenceName": "ds_adls_json_folder",
+                        "type": "DatasetReference",
+                        "parameters": {
+                            "Sub_Folder": "online"
+                        }
+                    }
+                ]
+            }
+        ],
+        "parameters": {
+            "Last_Modified": {
+                "type": "string"
+            }
+        },
+        "annotations": [],
+        "lastPublishTime": "2022-11-02T18:53:32Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}
