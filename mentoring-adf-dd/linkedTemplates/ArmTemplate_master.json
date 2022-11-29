@@ -1,0 +1,104 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "mentoring-adf-dd"
+		},
+		"kv_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://mentoring-key-vault-dd.vault.azure.net/"
+		},
+		"ls_ablb_movies_properties_typeProperties_sasUri_secretName": {
+			"type": "string",
+			"defaultValue": "SASURIBlobToMoviesk2"
+		},
+		"ls_ablb_online_properties_typeProperties_sasUri_secretName": {
+			"type": "string",
+			"defaultValue": "SecretOnlineReadOnly"
+		},
+		"ls_adls_raw_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://azurementoringdatalakedd.dfs.core.windows.net/"
+		},
+		"ls_azsql_movies_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "AzSQLMoviesETL"
+		},
+		"ls_sql_CinemaTickets_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "LocalDBConString"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "mentoring-adf-dd_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"kv_properties_typeProperties_baseUrl": {
+						"value": "[parameters('kv_properties_typeProperties_baseUrl')]"
+					},
+					"ls_adls_raw_properties_typeProperties_url": {
+						"value": "[parameters('ls_adls_raw_properties_typeProperties_url')]"
+					},
+					"ls_ablb_movies_properties_typeProperties_sasUri_secretName": {
+						"value": "[parameters('ls_ablb_movies_properties_typeProperties_sasUri_secretName')]"
+					},
+					"ls_ablb_online_properties_typeProperties_sasUri_secretName": {
+						"value": "[parameters('ls_ablb_online_properties_typeProperties_sasUri_secretName')]"
+					},
+					"ls_azsql_movies_properties_typeProperties_connectionString_secretName": {
+						"value": "[parameters('ls_azsql_movies_properties_typeProperties_connectionString_secretName')]"
+					},
+					"ls_sql_CinemaTickets_properties_typeProperties_connectionString_secretName": {
+						"value": "[parameters('ls_sql_CinemaTickets_properties_typeProperties_connectionString_secretName')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "mentoring-adf-dd_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'mentoring-adf-dd_ArmTemplate_0')]"
+			]
+		}
+	]
+}
