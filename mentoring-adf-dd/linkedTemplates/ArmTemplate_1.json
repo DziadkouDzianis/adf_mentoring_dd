@@ -1640,14 +1640,14 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pl_data_ablb_online_to_adls_online')]",
+			"name": "[concat(parameters('factoryName'), '/pl_data_ablb_online_to_adls_online_TEST')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
 						"name": "ACT_MT_Copy_ablb_to_adls_online",
-						"description": "task 7",
+						"description": "task 7 ",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -3955,7 +3955,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
-								"referenceName": "pl_data_ablb_online_to_adls_online",
+								"referenceName": "pl_data_ablb_online_to_adls_online_TEST",
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
@@ -4061,7 +4061,7 @@
 				"lastPublishTime": "2022-11-02T18:53:32Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/pl_data_ablb_online_to_adls_online')]",
+				"[concat(variables('factoryId'), '/pipelines/pl_data_ablb_online_to_adls_online_TEST')]",
 				"[concat(variables('factoryId'), '/pipelines/pl_data_adls_online_to_azsql_online_purchase')]"
 			]
 		},
