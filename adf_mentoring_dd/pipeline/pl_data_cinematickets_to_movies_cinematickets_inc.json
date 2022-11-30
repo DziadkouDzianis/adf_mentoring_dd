@@ -18,7 +18,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "--TRUNCATE TABLE stg.cinema_tickets;  --c)\tStage table should be truncated before population\n\nSELECT\n  coalesce(last_transaction_date, '1970-01-01') as last_target_transaction_date\nFROM (\n  SELECT \n    MAX(transactiondate) as last_transaction_date\n  FROM [dbo].[tCinemaTickets]\n  ) ds;",
+						"sqlReaderQuery": "--TRUNCATE TABLE stg.cinema_tickets;  --c)\tStage table should be truncated before population\n\n\nselect WatermarkValue as last_target_transaction_date\nfrom dbo.watermarktable\nWHERE [TableName] = 'tCinemaTickets';\n\n\n/*\nSELECT\n  coalesce(last_transaction_date, '1970-01-01') as last_target_transaction_date\nFROM (\n  SELECT \n    MAX(transactiondate) as last_transaction_date\n  FROM [dbo].[tCinemaTickets]\n  ) ds;\n*/",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -241,7 +241,7 @@
 					"scripts": [
 						{
 							"type": "Query",
-							"text": "EXEC dbo.LoadCredits_To_CinemaTickets;\nEXEC dbo.LoadCredits_To_Cinema;"
+							"text": "EXEC dbo.LoadCredits_To_CinemaTickets;\nEXEC dbo.LoadCredits_To_Cinema;\nEXEC dbo.usp_write_watermark @TableName = 'tCinemaTickets';"
 						}
 					],
 					"scriptBlockExecutionTimeout": "02:00:00"
