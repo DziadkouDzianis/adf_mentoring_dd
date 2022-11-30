@@ -1339,7 +1339,7 @@
 				"activities": [
 					{
 						"name": "ACT_MT_Copy_ablb_to_adls_online",
-						"description": "task 7 - Dzianis test",
+						"description": "task 7 - Dzianis test - bran",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
