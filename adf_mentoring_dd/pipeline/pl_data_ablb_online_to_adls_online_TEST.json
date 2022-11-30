@@ -4,7 +4,7 @@
 		"activities": [
 			{
 				"name": "ACT_MT_Copy_ablb_to_adls_online",
-				"description": "task 7 ",
+				"description": "task 7 - Dzianis test",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
