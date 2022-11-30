@@ -449,6 +449,7 @@
 				"activities": [
 					{
 						"name": "ACT_GEN_DEL_CleanAdlsFiles",
+						"description": "real movies change",
 						"type": "Delete",
 						"dependsOn": [],
 						"policy": {
