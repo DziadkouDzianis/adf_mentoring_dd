@@ -89,7 +89,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT /*dateadd(hour, -2, [WatermarkValue]) */\n  FORMAT(dateadd(hour, -2, [WatermarkValue]), 'yyyy-MM-ddThh:mm:ssZ') as last_modified\nFROM dbo.watermarktable\nWHERE [TableName] = 'json';\n",
+						"sqlReaderQuery": "SELECT /*dateadd(hour, -2, [WatermarkValue]) */\n  FORMAT(dateadd(hour, -3, [WatermarkValue]), 'yyyy-MM-ddThh:mm:ssZ') as last_modified\nFROM dbo.watermarktable\nWHERE [TableName] = 'json';\n",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -121,7 +121,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "\nUPDATE dbo.watermarktable\nSET [WatermarkValue] = GETDATE()\nWHERE [TableName] = 'json';\n",
+						"sqlReaderQuery": "UPDATE dbo.watermarktable\nSET [WatermarkValue] = GETUTCDATE() \nWHERE [TableName] = 'json';\n",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
