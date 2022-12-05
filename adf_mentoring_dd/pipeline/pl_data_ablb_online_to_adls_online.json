@@ -20,7 +20,7 @@
 						"type": "JsonSource",
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
-							"recursive": true,
+							"recursive": false,
 							"modifiedDatetimeStart": {
 								"value": "@pipeline().parameters.Last_Modified",
 								"type": "Expression"
