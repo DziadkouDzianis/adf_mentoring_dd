@@ -1,0 +1,19 @@
+{
+	"name": "MetadataDrivenCopyTask_h0k_ControlDS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_azsql_movies",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "MetadataDrivenCopyTask_h0k_20221205"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "MainControlTable_9qs"
+		}
+	}
+}
