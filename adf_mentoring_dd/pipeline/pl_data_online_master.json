@@ -16,13 +16,13 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "pl_data_ablb_online_to_adls_online_TEST",
+						"referenceName": "pl_data_ablb_online_to_adls_online",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,
 					"parameters": {
 						"Last_Modified": {
-							"value": "@activity('ACT_GEN_META_LastModifiedDateAdls').output.lastModified",
+							"value": "@activity('ACT_GEN_META_LastModifiedDateAdls').output.firstRow",
 							"type": "Expression"
 						}
 					}
@@ -76,7 +76,7 @@
 			},
 			{
 				"name": "ACT_GEN_META_LastModifiedDateAdls",
-				"type": "GetMetadata",
+				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -87,23 +87,15 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT /*dateadd(hour, -2, [WatermarkValue]) */\n  FORMAT(dateadd(hour, -2, [WatermarkValue]), 'yyyy-MM-ddThh:mm:ss.fffZ') as last_modified\nFROM dbo.watermarktable\nWHERE [TableName] = 'json';\n",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
 					"dataset": {
-						"referenceName": "ds_adls_json_folder",
-						"type": "DatasetReference",
-						"parameters": {
-							"Sub_Folder": "online"
-						}
-					},
-					"fieldList": [
-						"lastModified"
-					],
-					"storeSettings": {
-						"type": "AzureBlobFSReadSettings",
-						"recursive": true,
-						"enablePartitionDiscovery": false
-					},
-					"formatSettings": {
-						"type": "JsonReadSettings"
+						"referenceName": "ds_azsql_movies_credits",
+						"type": "DatasetReference"
 					}
 				}
 			}
