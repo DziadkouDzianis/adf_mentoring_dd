@@ -19,7 +19,7 @@
 						"type": "JsonSource",
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
-							"recursive": true,
+							"recursive": false,
 							"wildcardFolderPath": "online",
 							"wildcardFileName": "*.json",
 							"enablePartitionDiscovery": false
