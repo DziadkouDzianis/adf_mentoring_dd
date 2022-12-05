@@ -121,7 +121,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "UPDATE dbo.watermarktable\nSET [WatermarkValue] = GETUTCDATE() \nWHERE [TableName] = 'json';\n",
+						"sqlReaderQuery": "UPDATE dbo.watermarktable\nSET [WatermarkValue] = GETUTCDATE() \nWHERE [TableName] = 'json';\n\nSELECT 1;\n",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
