@@ -22,7 +22,7 @@
 					"waitOnCompletion": true,
 					"parameters": {
 						"Last_Modified": {
-							"value": "@activity('ACT_GEN_META_LastModifiedDateAdls').output.firstRow",
+							"value": "@activity('ACT_GEN_META_LastModifiedDateAdls').output.firstRow.last_modified",
 							"type": "Expression"
 						}
 					}
@@ -48,7 +48,7 @@
 					"waitOnCompletion": true,
 					"parameters": {
 						"Last_Modified": {
-							"value": "@activity('ACT_GEN_META_LastModifiedDateAdls').output.lastModified",
+							"value": "@activity('ACT_GEN_META_LastModifiedDateAdls').output.firstRow.last_modified",
 							"type": "Expression"
 						}
 					}
@@ -90,6 +90,38 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": "SELECT /*dateadd(hour, -2, [WatermarkValue]) */\n  FORMAT(dateadd(hour, -2, [WatermarkValue]), 'yyyy-MM-ddThh:mm:ss.fffZ') as last_modified\nFROM dbo.watermarktable\nWHERE [TableName] = 'json';\n",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ds_azsql_movies_credits",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "ACT_UPD_LastModifiedDateAdls",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "pl_data_adls_online_to_adls_online_arc",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "\nUPDATE dbo.watermarktable\nSET [WatermarkValue] = GETDATE()\nWHERE [TableName] = 'json';\n",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
