@@ -22,7 +22,8 @@
 				"type": "string"
 			},
 			"p_qoute_character": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "\""
 			}
 		},
 		"annotations": [],
