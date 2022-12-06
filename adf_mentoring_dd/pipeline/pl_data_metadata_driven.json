@@ -1,0 +1,131 @@
+{
+	"name": "pl_data_metadata_driven",
+	"properties": {
+		"description": "task 9",
+		"activities": [
+			{
+				"name": "ACT_COPY_metadata_driven_approach",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": {
+						"value": "@pipeline().parameters.p_DIU",
+						"type": "Expression"
+					},
+					"translator": {
+						"value": "@pipeline().parameters.p_mapping",
+						"type": "Expression"
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_adls_metadata_driven",
+						"type": "DatasetReference",
+						"parameters": {
+							"p_input_file_name": {
+								"value": "@pipeline().parameters.p_input_file_name",
+								"type": "Expression"
+							},
+							"p_col_delimiter": {
+								"value": "@pipeline().parameters.p_col_delimiter",
+								"type": "Expression"
+							},
+							"p_row_delimiter": {
+								"value": "@pipeline().parameters.p_row_delimiter",
+								"type": "Expression"
+							},
+							"p_encoding": {
+								"value": "@pipeline().parameters.p_encoding",
+								"type": "Expression"
+							},
+							"p_escape_character": {
+								"value": "@pipeline().parameters.p_escape_character",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_azsql_metadata_driven",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema_name": {
+								"value": "@pipeline().parameters.p_schema_name",
+								"type": "Expression"
+							},
+							"table_name": {
+								"value": "@pipeline().parameters.p_table_name",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"p_input_file_name": {
+				"type": "string",
+				"defaultValue": "credits.csv"
+			},
+			"p_col_delimiter": {
+				"type": "string",
+				"defaultValue": ","
+			},
+			"p_row_delimiter": {
+				"type": "string",
+				"defaultValue": "\\r\\n"
+			},
+			"p_encoding": {
+				"type": "string",
+				"defaultValue": "UTF-8"
+			},
+			"p_escape_character": {
+				"type": "string",
+				"defaultValue": "\""
+			},
+			"p_schema_name": {
+				"type": "string",
+				"defaultValue": "stg"
+			},
+			"p_table_name": {
+				"type": "string",
+				"defaultValue": "credits"
+			},
+			"p_mapping": {
+				"type": "string",
+				"defaultValue": "                                  \"translator\": {                                     \"type\": \"TabularTranslator\",                                     \"mappings\": [                                         {                                             \"source\": {                                                 \"name\": \"cast\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"String\"                                             },                                             \"sink\": {                                                 \"name\": \"cast\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"nvarchar\"                                             }                                         },                                         {                                             \"source\": {                                                 \"name\": \"crew\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"String\"                                             },                                             \"sink\": {                                                 \"name\": \"crew\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"nvarchar\"                                             }                                         },                                         {                                             \"source\": {                                                 \"name\": \"id\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"String\"                                             },                                             \"sink\": {                                                 \"name\": \"id\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"nvarchar\"                                             }                                         },                                         {                                             \"source\": {                                                 \"name\": \"pipelineId\",                                                 \"type\": \"String\"                                             },                                             \"sink\": {                                                 \"name\": \"pipelineId\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"nvarchar\"                                             }                                         },                                         {                                             \"source\": {                                                 \"name\": \"source_filename\",                                                 \"type\": \"String\"                                             },                                             \"sink\": {                                                 \"name\": \"source_filename\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"nvarchar\"                                             }                                         }                                     ],                                     \"typeConversion\": true,                                     \"typeConversionSettings\": {                                         \"allowDataTruncation\": true,                                         \"treatBooleanAsNumber\": false \t\t\t\t                                      }                                 }"
+			},
+			"p_DIU": {
+				"type": "int",
+				"defaultValue": 0
+			}
+		},
+		"annotations": []
+	}
+}
