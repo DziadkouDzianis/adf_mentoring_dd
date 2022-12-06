@@ -18,9 +18,21 @@
 				"typeProperties": {
 					"source": {
 						"type": "DelimitedTextSource",
+						"additionalColumns": {
+							"type": "Expression",
+							"value": "@json(string(pipeline().parameters.p_additional_columns)).additionalColumns\n"
+						},
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
+							"wildcardFolderPath": {
+								"value": "@pipeline().parameters.p_subfolder",
+								"type": "Expression"
+							},
+							"wildcardFileName": {
+								"value": "@pipeline().parameters.p_wildcard",
+								"type": "Expression"
+							},
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
@@ -91,15 +103,14 @@
 		"parameters": {
 			"p_input_file_name": {
 				"type": "string",
-				"defaultValue": "credits.csv"
+				"defaultValue": "credits - Copy.csv"
 			},
 			"p_col_delimiter": {
 				"type": "string",
 				"defaultValue": ","
 			},
 			"p_row_delimiter": {
-				"type": "string",
-				"defaultValue": "\\r\\n"
+				"type": "string"
 			},
 			"p_encoding": {
 				"type": "string",
@@ -124,6 +135,33 @@
 			"p_DIU": {
 				"type": "int",
 				"defaultValue": 0
+			},
+			"p_subfolder": {
+				"type": "string",
+				"defaultValue": "metadata-driven"
+			},
+			"p_wildcard": {
+				"type": "string",
+				"defaultValue": "credits -*"
+			},
+			"p_additional_columns": {
+				"type": "string",
+				"defaultValue": {
+					"additionalColumns": [
+						{
+							"name": "pipelineId",
+							"value": "..."
+						},
+						{
+							"name": "source_filename",
+							"value": "$$FILEPATH"
+						}
+					],
+					"skipLineCount": 0,
+					"recursive": true,
+					"enablePartitionDiscovery": false,
+					"wildcardFileName": "credits*"
+				}
 			}
 		},
 		"annotations": []
