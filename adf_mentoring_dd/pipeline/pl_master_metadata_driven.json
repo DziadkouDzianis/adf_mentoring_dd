@@ -17,64 +17,20 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT *\nFROM @{pipeline().parameters.p_MainControlTableName} \nwhere 1=1\n  and CopyEnabled = 1",
+						"sqlReaderQuery": "SELECT top 1 *\nFROM @{pipeline().parameters.p_MainControlTableName} \nwhere 1=1\n  and CopyEnabled = 1",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
 					"dataset": {
 						"referenceName": "ds_azsql_movies_credits",
 						"type": "DatasetReference"
-					}
-				}
-			},
-			{
-				"name": "ForEach1",
-				"type": "ForEach",
-				"dependsOn": [],
-				"userProperties": [],
-				"typeProperties": {
-					"items": {
-						"value": "@activity('ACT_GET_COUNT_RUNS').output",
-						"type": "Expression"
 					},
-					"activities": [
-						{
-							"name": "ACT_GET_TOP1_TABLE_TO_PROCESS",
-							"type": "Lookup",
-							"dependsOn": [],
-							"policy": {
-								"timeout": "0.12:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
-							"userProperties": [],
-							"typeProperties": {
-								"source": {
-									"type": "AzureSqlSource",
-									"sqlReaderQuery": "select top 1 *\nFROM p_MainControlTableName",
-									"queryTimeout": "02:00:00",
-									"partitionOption": "None"
-								},
-								"dataset": {
-									"referenceName": "ds_azsql_metadata_driven",
-									"type": "DatasetReference",
-									"parameters": {
-										"schema_name": {
-											"value": "@pipeline().parameters.p_MainControlTableName",
-											"type": "Expression"
-										}
-									}
-								}
-							}
-						}
-					]
+					"firstRowOnly": false
 				}
 			},
 			{
-				"name": "If Condition1",
-				"type": "IfCondition",
+				"name": "ACT_PROCEED_PIPELINE",
+				"type": "ForEach",
 				"dependsOn": [
 					{
 						"activity": "ACT_GET_COUNT_RUNS",
@@ -85,10 +41,76 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"expression": {
-						"value": "@greater(activity('ACT_GET_COUNT_RUNS').output, 0)",
+					"items": {
+						"value": "@activity('ACT_GET_COUNT_RUNS').output.value",
 						"type": "Expression"
-					}
+					},
+					"isSequential": false,
+					"activities": [
+						{
+							"name": "pl_data_metadata_driven",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "pl_data_metadata_driven",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"p_input_file_name": {
+										"value": "@item().p_input_file_name",
+										"type": "Expression"
+									},
+									"p_col_delimiter": {
+										"value": "@item().p_col_delimiter",
+										"type": "Expression"
+									},
+									"p_row_delimiter": {
+										"value": "@item().p_row_delimiter",
+										"type": "Expression"
+									},
+									"p_encoding": {
+										"value": "@item().p_encoding",
+										"type": "Expression"
+									},
+									"p_escape_character": {
+										"value": "@item().p_escape_character",
+										"type": "Expression"
+									},
+									"p_schema_name": {
+										"value": "@item().p_schema_name",
+										"type": "Expression"
+									},
+									"p_table_name": {
+										"value": "@item().p_table_name",
+										"type": "Expression"
+									},
+									"p_mapping": {
+										"value": "@item().p_mapping",
+										"type": "Expression"
+									},
+									"p_DIU": {
+										"value": "@item().p_DIU",
+										"type": "Expression"
+									},
+									"p_subfolder": {
+										"value": "@item().p_subfolder",
+										"type": "Expression"
+									},
+									"p_wildcard": {
+										"value": "@item().p_wildcard",
+										"type": "Expression"
+									},
+									"p_additional_columns": {
+										"value": "@item().p_additional_columns",
+										"type": "Expression"
+									}
+								}
+							}
+						}
+					]
 				}
 			}
 		],

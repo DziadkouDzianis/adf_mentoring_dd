@@ -55,7 +55,7 @@
 						"type": "Expression"
 					},
 					"translator": {
-						"value": "@pipeline().parameters.p_mapping",
+						"value": "@json(pipeline().parameters.p_mapping)",
 						"type": "Expression"
 					}
 				},
@@ -109,11 +109,11 @@
 		"parameters": {
 			"p_input_file_name": {
 				"type": "string",
-				"defaultValue": "credits - Copy.csv"
+				"defaultValue": "ratings*.csv"
 			},
 			"p_col_delimiter": {
 				"type": "string",
-				"defaultValue": ","
+				"defaultValue": "|"
 			},
 			"p_row_delimiter": {
 				"type": "string"
@@ -132,11 +132,11 @@
 			},
 			"p_table_name": {
 				"type": "string",
-				"defaultValue": "credits"
+				"defaultValue": "ratings"
 			},
 			"p_mapping": {
 				"type": "string",
-				"defaultValue": "                                  \"translator\": {                                     \"type\": \"TabularTranslator\",                                     \"mappings\": [                                         {                                             \"source\": {                                                 \"name\": \"cast\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"String\"                                             },                                             \"sink\": {                                                 \"name\": \"cast\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"nvarchar\"                                             }                                         },                                         {                                             \"source\": {                                                 \"name\": \"crew\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"String\"                                             },                                             \"sink\": {                                                 \"name\": \"crew\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"nvarchar\"                                             }                                         },                                         {                                             \"source\": {                                                 \"name\": \"id\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"String\"                                             },                                             \"sink\": {                                                 \"name\": \"id\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"nvarchar\"                                             }                                         },                                         {                                             \"source\": {                                                 \"name\": \"pipelineId\",                                                 \"type\": \"String\"                                             },                                             \"sink\": {                                                 \"name\": \"pipelineId\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"nvarchar\"                                             }                                         },                                         {                                             \"source\": {                                                 \"name\": \"source_filename\",                                                 \"type\": \"String\"                                             },                                             \"sink\": {                                                 \"name\": \"source_filename\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"nvarchar\"                                             }                                         }                                     ],                                     \"typeConversion\": true,                                     \"typeConversionSettings\": {                                         \"allowDataTruncation\": true,                                         \"treatBooleanAsNumber\": false                                           }                                 }"
+				"defaultValue": "                                \"translator\": {                                     \"type\": \"TabularTranslator\",                                     \"mappings\": [                                         {                                             \"source\": {                                                 \"name\": \"user_id\"                                             },                                             \"sink\": {                                                 \"name\": \"userId\"                                             }                                         },                                         {                                             \"source\": {                                                 \"name\": \"movie_id\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"String\"                                             },                                             \"sink\": {                                                 \"name\": \"movieId\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"nvarchar\"                                             }                                         },                                         {                                             \"source\": {                                                 \"name\": \"rating\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"String\"                                             },                                             \"sink\": {                                                 \"name\": \"rating\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"nvarchar\"                                             }                                         },                                         {                                             \"source\": {                                                 \"name\": \"timestamp\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"String\"                                             },                                             \"sink\": {                                                 \"name\": \"timestamp\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"nvarchar\"                                             }                                         },                                         {                                             \"source\": {                                                 \"name\": \"pipelineId\",                                                 \"type\": \"String\"                                             },                                             \"sink\": {                                                 \"name\": \"pipelineId\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"nvarchar\"                                             }                                         },                                         {                                             \"source\": {                                                 \"name\": \"source_filename\",                                                 \"type\": \"String\"                                             },                                             \"sink\": {                                                 \"name\": \"source_filename\",                                                 \"type\": \"String\",                                                 \"physicalType\": \"nvarchar\"                                             }                                         }                                     ],                                     \"typeConversion\": true,                                     \"typeConversionSettings\": {                                         \"allowDataTruncation\": true,                                         \"treatBooleanAsNumber\": false                                     }                                 }"
 			},
 			"p_DIU": {
 				"type": "int",
@@ -148,7 +148,7 @@
 			},
 			"p_wildcard": {
 				"type": "string",
-				"defaultValue": "credits -*"
+				"defaultValue": "ratings_part*"
 			},
 			"p_additional_columns": {
 				"type": "string",
@@ -166,7 +166,7 @@
 					"skipLineCount": 0,
 					"recursive": true,
 					"enablePartitionDiscovery": false,
-					"wildcardFileName": "credits*"
+					"wildcardFileName": "ratings_part*"
 				}
 			}
 		},
