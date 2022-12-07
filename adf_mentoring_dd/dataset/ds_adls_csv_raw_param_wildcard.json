@@ -30,7 +30,6 @@
 				"fileSystem": "raw"
 			},
 			"columnDelimiter": ",",
-			"rowDelimiter": "\r\n",
 			"escapeChar": "\"",
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
