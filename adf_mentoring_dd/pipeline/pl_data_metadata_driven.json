@@ -83,8 +83,7 @@
 							"p_escape_character": {
 								"value": "@pipeline().parameters.p_escape_character",
 								"type": "Expression"
-							},
-							"p_qoute_character": "\""
+							}
 						}
 					}
 				],
