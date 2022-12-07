@@ -15,35 +15,16 @@
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
-		"schema": [
-			{
-				"name": "userId",
-				"type": "nvarchar"
-			},
-			{
-				"name": "movieId",
-				"type": "nvarchar"
-			},
-			{
-				"name": "rating",
-				"type": "nvarchar"
-			},
-			{
-				"name": "timestamp",
-				"type": "nvarchar"
-			},
-			{
-				"name": "pipelineId",
-				"type": "nvarchar"
-			},
-			{
-				"name": "source_filename",
-				"type": "nvarchar"
-			}
-		],
+		"schema": [],
 		"typeProperties": {
-			"schema": "stg",
-			"table": "ratings"
+			"schema": {
+				"value": "@dataset().schema_name",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().table_name",
+				"type": "Expression"
+			}
 		}
 	}
 }

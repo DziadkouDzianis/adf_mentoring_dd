@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "ACT_GET_COUNT_RUNS",
+				"name": "ACT_GET_TABLE_INFO",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -17,7 +17,10 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT top 1 *\nFROM @{pipeline().parameters.p_MainControlTableName} \nwhere 1=1\n  and CopyEnabled = 1",
+						"sqlReaderQuery": {
+							"value": "SELECT *\nFROM @{pipeline().parameters.p_MainControlTableName} \nwhere 1=1\n  and CopyEnabled = 1",
+							"type": "Expression"
+						},
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -33,7 +36,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "ACT_GET_COUNT_RUNS",
+						"activity": "ACT_GET_TABLE_INFO",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -42,7 +45,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('ACT_GET_COUNT_RUNS').output.value",
+						"value": "@activity('ACT_GET_TABLE_INFO').output.value",
 						"type": "Expression"
 					},
 					"isSequential": false,
