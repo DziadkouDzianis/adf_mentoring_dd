@@ -104,6 +104,56 @@
 						}
 					}
 				]
+			},
+			{
+				"name": "ACT_SP_LOG",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "ACT_COPY_metadata_driven_approach",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[usp_log]",
+					"storedProcedureParameters": {
+						"@json": {
+							"value": {
+								"value": "@activity('ACT_COPY_metadata_driven_approach').output",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"@pipelineName": {
+							"value": {
+								"value": "@pipeline().Pipeline",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"@runID": {
+							"value": {
+								"value": "@pipeline().RunId",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "ls_azsql_movies",
+					"type": "LinkedServiceReference"
+				}
 			}
 		],
 		"parameters": {
