@@ -20,7 +20,7 @@
 						"type": "DelimitedTextSource",
 						"additionalColumns": {
 							"type": "Expression",
-							"value": "@json(string(pipeline().parameters.p_additional_columns)).additionalColumns\n"
+							"value": "@json(string(pipeline().parameters.p_additional_columns)).additionalColumns"
 						},
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
@@ -83,7 +83,8 @@
 							"p_escape_character": {
 								"value": "@pipeline().parameters.p_escape_character",
 								"type": "Expression"
-							}
+							},
+							"p_qoute_character": "\""
 						}
 					}
 				],
@@ -151,22 +152,7 @@
 			},
 			"p_additional_columns": {
 				"type": "string",
-				"defaultValue": {
-					"additionalColumns": [
-						{
-							"name": "pipelineId",
-							"value": "..."
-						},
-						{
-							"name": "source_filename",
-							"value": "$$FILEPATH"
-						}
-					],
-					"skipLineCount": 0,
-					"recursive": true,
-					"enablePartitionDiscovery": false,
-					"wildcardFileName": "ratings_part*"
-				}
+				"defaultValue": "{                     \"name\": \"pipelineId\",                     \"value\": \"..\"                 },                 {                     \"name\": \"source_filename\",                     \"value\": \"$$FILEPATH\"                 }"
 			}
 		},
 		"annotations": []
