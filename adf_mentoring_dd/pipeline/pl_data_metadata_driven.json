@@ -154,6 +154,23 @@
 					"referenceName": "ls_azsql_movies",
 					"type": "LinkedServiceReference"
 				}
+			},
+			{
+				"name": "Set_Var_ERR",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "ACT_COPY_metadata_driven_approach",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "err",
+					"value": ""
+				}
 			}
 		],
 		"parameters": {
@@ -218,6 +235,11 @@
 					"enablePartitionDiscovery": false,
 					"wildcardFileName": "credits*"
 				}
+			}
+		},
+		"variables": {
+			"err": {
+				"type": "String"
 			}
 		},
 		"annotations": []
