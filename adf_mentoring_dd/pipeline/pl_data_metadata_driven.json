@@ -20,7 +20,7 @@
 						"type": "DelimitedTextSource",
 						"additionalColumns": {
 							"type": "Expression",
-							"value": "@json(string(pipeline().parameters.p_additional_columns)).additionalColumns"
+							"value": "@json(string(pipeline().parameters.p_additional_columns)).additionalColumns\n"
 						},
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
@@ -127,21 +127,21 @@
 				"typeProperties": {
 					"storedProcedureName": "[dbo].[usp_log]",
 					"storedProcedureParameters": {
-						"@json": {
+						"json": {
 							"value": {
-								"value": "@activity('ACT_COPY_metadata_driven_approach').output",
+								"value": "@string(activity('ACT_COPY_metadata_driven_approach').output)",
 								"type": "Expression"
 							},
 							"type": "String"
 						},
-						"@pipelineName": {
+						"pipelineName": {
 							"value": {
 								"value": "@pipeline().Pipeline",
 								"type": "Expression"
 							},
 							"type": "String"
 						},
-						"@runID": {
+						"runID": {
 							"value": {
 								"value": "@pipeline().RunId",
 								"type": "Expression"
@@ -202,7 +202,22 @@
 			},
 			"p_additional_columns": {
 				"type": "string",
-				"defaultValue": "{                     \"name\": \"pipelineId\",                     \"value\": \"..\"                 },                 {                     \"name\": \"source_filename\",                     \"value\": \"$$FILEPATH\"                 }"
+				"defaultValue": {
+					"additionalColumns": [
+						{
+							"name": "pipelineId",
+							"value": "..."
+						},
+						{
+							"name": "source_filename",
+							"value": "$$FILEPATH"
+						}
+					],
+					"skipLineCount": 0,
+					"recursive": true,
+					"enablePartitionDiscovery": false,
+					"wildcardFileName": "credits*"
+				}
 			}
 		},
 		"annotations": []
