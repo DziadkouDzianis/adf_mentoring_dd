@@ -20,7 +20,7 @@
 						"type": "DelimitedTextSource",
 						"additionalColumns": {
 							"type": "Expression",
-							"value": "@json(string(pipeline().parameters.p_additional_columns)).additionalColumns\n"
+							"value": "@json(string(pipeline().parameters.p_additional_columns)).additionalColumns"
 						},
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
@@ -42,7 +42,7 @@
 					"sink": {
 						"type": "AzureSqlSink",
 						"preCopyScript": {
-							"value": "TRUNCATE TABLE @{pipeline().parameters.p_schema_name}.@{pipeline().parameters.p_table_name};\nselect 1",
+							"value": "TRUNCATE TABLE 123 @{pipeline().parameters.p_schema_name}.@{pipeline().parameters.p_table_name};\nselect 1",
 							"type": "Expression"
 						},
 						"writeBehavior": "insert",
@@ -169,7 +169,60 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "err",
-					"value": ""
+					"value": {
+						"value": "@string(\n    json(\n        replace(\n            string(activity('ACT_COPY_metadata_driven_approach').Error),\n            '''',\n            ''''''\n        )\n    )\n)",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "ACT_SP_LOG_ERROR",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Set_Var_ERR",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "dbo.usp_log_error",
+					"storedProcedureParameters": {
+						"json": {
+							"value": {
+								"value": "@variables('err')",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"pipelineName": {
+							"value": {
+								"value": "@pipeline().Pipeline",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"runID": {
+							"value": {
+								"value": "@pipeline().RunId",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "ls_azsql_movies",
+					"type": "LinkedServiceReference"
 				}
 			}
 		],
