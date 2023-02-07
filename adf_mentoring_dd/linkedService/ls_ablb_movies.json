@@ -1,6 +1,5 @@
 {
 	"name": "ls_ablb_movies",
-	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"description": "linked service for the movies blob",
 		"annotations": [],
@@ -15,5 +14,6 @@
 				"secretName": "SASURIBlobToMoviesk2"
 			}
 		}
-	}
+	},
+	"type": "Microsoft.DataFactory/factories/linkedservices"
 }
